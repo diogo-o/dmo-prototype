@@ -16,6 +16,7 @@
     return tools;
   };
   let selectedTool=null,activeTrace=null;
+  $('#movementForm input[type="date"]').value=new Date().toISOString().slice(0,10);
   $('#recordResults').style.display='none';
   $('#recordEmpty').textContent='Pesquise uma BQ, abra um registo existente ou inicie um novo registo.';
   $('#recordDetail').querySelectorAll(':scope > .card').forEach(card=>card.hidden=true);
@@ -39,10 +40,37 @@
   $('#cancelBqTrace').onclick=close;
   function showTrace(trace){activeTrace=trace;search.value=trace.tool.reference;$('#recordEmpty').classList.add('hidden');$('#recordDetail').classList.remove('hidden');context.hidden=false;const associated=jobons().find(item=>item.contexts?.BQ?.id===trace.bqId);context.replaceChildren();const title=document.createElement('strong');title.textContent=`BQ ${trace.tool.reference} · Lote ${trace.tool.lot}`;const info=document.createElement('span');info.textContent=associated?`${associated.reference} · Produção ${associated.production} · ${associated.machine}`:'Produção por associar — o registo e os movimentos continuam disponíveis.';context.append(title,info);const movementCount=document.createElement('small');movementCount.textContent=`${trace.movements.length} movimento(s) neste registo`;context.append(movementCount);$('.movement-subtitle').textContent=`BQ ${trace.tool.reference} · Lote ${trace.tool.lot}`;const modal=$('#movementModal .context');const facts=modal?.querySelectorAll('strong');if(facts?.length>=3){facts[0].textContent=trace.tool.reference;facts[1].textContent=trace.tool.lot;facts[2].textContent=associated?.machine||'Por associar'}const summary=$('#recordDetail .summary-line');if(summary)summary.textContent=`${title.textContent} · ${info.textContent}`;$('#recordDetail').scrollIntoView({block:'nearest'})}
   function drawTraces(){const root=$('#bqTraceList');root.replaceChildren();const q=search.value.trim().toLowerCase();const matching=read().filter(trace=>!q||`${trace.tool.reference} ${trace.tool.lot}`.toLowerCase().includes(q));for(const trace of matching){const line=document.createElement('div');line.className='beta-bq-trace-row';const label=document.createElement('span');const associated=jobons().find(item=>item.contexts?.BQ?.id===trace.bqId);label.textContent=`BQ ${trace.tool.reference} · Lote ${trace.tool.lot} · ${associated?`${associated.production} · ${associated.machine}`:'Produção por associar'}`;const open=document.createElement('button');open.type='button';open.className='btn';open.textContent='Abrir registo';open.onclick=()=>showTrace(trace);line.append(label,open);if(!associated){const matches=candidates(trace.tool);if(matches.length){const select=document.createElement('select');select.setAttribute('aria-label',`Associar produção a ${trace.tool.reference}`);select.add(new Option('Escolher produção',''));for(const item of matches)select.add(new Option(`${item.reference} · ${item.production} · ${item.line}`,item.id));const attach=document.createElement('button');attach.type='button';attach.className='btn';attach.textContent='Associar';attach.onclick=()=>{if(!select.value)return;const traces=read();const updated=traces.find(item=>item.id===trace.id);if(!updated)return;updated.bqId=select.value;save(traces);drawTraces();if(activeTrace?.id===trace.id)showTrace(updated)};line.append(select,attach)}}root.append(line)}if(!matching.length){const empty=document.createElement('p');empty.textContent='Nenhum registo encontrado. Pode iniciar um registo pela BQ mesmo sem Job On.';root.append(empty)}}
+  function drawHistory(){
+    const root=$('#movements');root.querySelectorAll('.movement[data-type]').forEach(row=>row.remove());
+    for(const trace of read()){
+      let pending=[];
+      for(const movement of trace.movements){
+        const type=movement.type==='Saída'?'out':movement.type==='Entrada'?'in':'failed';
+        const qty=Number(movement.quantity);
+        let discrepancy=null;
+        if(type==='out')pending.push(qty);
+        if(type==='in'){
+          const outgoing=pending.length?pending.shift():0;
+          discrepancy=outgoing-qty;
+          if(discrepancy>0)pending.unshift(discrepancy);
+        }
+        const row=document.createElement('button');row.type='button';row.className='movement wide';
+        row.dataset.type=type;row.dataset.text=`${trace.tool.reference} ${trace.tool.lot}`.toLowerCase();
+        row.dataset.repairer='';row.dataset.state='current';row.dataset.date=movement.date||'';
+        const associated=jobons().find(item=>item.contexts?.BQ?.id===trace.bqId);
+        const values=[trace.tool.reference,trace.tool.lot,movement.type,qty,discrepancy===null||discrepancy===0?'—':String(discrepancy).replace('-', '−'),'',associated?.machine||'—',movement.date||'—',window.betaDemoSession?.get()?.name||'Operador'];
+        values.forEach((value,index)=>{const cell=document.createElement(index===0?'strong':'span');cell.textContent=value;if(index===2)cell.className=`type ${type}`;row.append(cell)});
+        row.onclick=()=>{root.querySelectorAll('.movement').forEach(item=>item.classList.toggle('selected',item===row));$('#editMovement').disabled=$('#deleteMovement').disabled=false};
+        row.ondblclick=()=>{$('[data-view="registo"]').click();showTrace(trace)};
+        root.append(row);
+      }
+    }
+    window.betaBqHistoryRefresh?.();
+  }
   $('#saveBqTrace').onclick=()=>{if(!selectedTool)return;const option=$('#bqJobonCandidate').selectedOptions[0];const trace={id:`demo-bq-trace-${crypto.randomUUID?.()||Date.now()}`,toolId:selectedTool.toolId,tool:{...selectedTool},bqId:option?.value||null,status:'Aberto',movements:[]};save([trace,...read()]);close();drawTraces();showTrace(trace)};
-  $('#movementForm').addEventListener('submit',()=>{if(!activeTrace)return;const traces=read(),trace=traces.find(item=>item.id===activeTrace.id);if(!trace)return;const form=$('#movementForm');if(!form.reportValidity())return;trace.movements.push({type:$('#movementTitle').textContent,quantity:Number(form.querySelector('input[type="number"]').value),date:form.querySelector('input[type="date"]').value,reason:$('#movementReason').value});save(traces);activeTrace=trace},true);
+  $('#movementForm').addEventListener('submit',()=>{if(!activeTrace)return;const traces=read(),trace=traces.find(item=>item.id===activeTrace.id);if(!trace)return;const form=$('#movementForm');if(!form.reportValidity())return;trace.movements.push({type:$('#movementTitle').textContent,quantity:Number(form.querySelector('input[type="number"]').value),date:form.querySelector('input[type="date"]').value,reason:$('#movementReason').value});save(traces);activeTrace=trace;drawHistory();showTrace(trace)},true);
   search.addEventListener('input',()=>{if(!panel.hidden){selectedTool=null;$('#saveBqTrace').disabled=true;drawTools();drawCandidates()}drawTraces()});
   document.querySelector('#bqCurrentLines')?.addEventListener('click',event=>{const line=event.target.closest('[data-line]')?.dataset.line;if(!line)return;const row=window.betaProductionOverview?.records().filter(item=>item.line===line).sort((a,b)=>b.date.localeCompare(a.date))[0];if(!row)return;const tool=catalog().find(item=>item.reference===row.bq?.split(' · ')[0]);if(tool){selectedTool=tool;begin()}});
   const notice=document.createElement('p');notice.className='beta-bq-notice';const latest=events()[0];notice.textContent=latest?`Job On atualizado: ${latest.reference} · ${latest.production} · ${latest.line}. A produção fica disponível para associar ao registo da BQ.`:'Selecione a BQ para iniciar o registo; as produções disponíveis surgem no registo quando existirem.';traceList.prepend(notice);
-  drawTraces();
+  drawTraces();drawHistory();
 })();

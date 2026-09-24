@@ -123,9 +123,5 @@
       <div><span>Linha</span><strong>B3</strong></div>
       <div><span>Estado</span><strong>Aberto</strong></div>
     </section>`);
-    const summary=[...document.querySelectorAll('.history-summary .metric')].find(x=>x.textContent.includes('Saldo de movimentos'));
-    if(summary)summary.innerHTML='<span>Discrepância geral</span><strong>−5</strong><small>Gerada na entrada de 14/08/2026 · 09:16</small>';
-    const incoming=[...document.querySelectorAll('.movement[data-type="in"]')][0];
-    if(incoming){incoming.children[3].textContent='15';incoming.children[4].textContent='−5';incoming.children[7].textContent='14/08/2026 · 09:16';}
   }
 })();
