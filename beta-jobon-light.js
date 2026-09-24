@@ -30,7 +30,7 @@
    const q=$('#lightSearch').value.trim().toLowerCase();
    const matches=records.filter(r=>r.date===selectedDate()&&`${r.reference} ${r.production} ${r.line}`.toLowerCase().includes(q)).sort((a,b)=>overview.lines.indexOf(a.line)-overview.lines.indexOf(b.line)||a.reference.localeCompare(b.reference));
    $('#lightDayTitle').textContent=`Produções de ${day} de ${monthLabel()}`;
-   $('#lightNoResults').hidden=matches.length>0;
+   $('#lightNoResults').hidden=matches.length>0||!q;
    $('#lightRemoveDate').disabled=!selected||!matches.includes(selected);
    for(const line of overview.lines){
      const onLine=matches.filter(record=>record.line===line);
