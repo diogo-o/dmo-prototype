@@ -26,10 +26,9 @@
   if(page==='boquilhas'&&header&&primary&&header.contains(primary))header.insertAdjacentElement('afterend',primary);
   if(primary){
     primary.querySelectorAll('a').forEach(link=>{if((link.getAttribute('href')||'').includes('JOB_ON'))link.textContent='Planeamento'});
-    const chosen=window.betaDemoSession?.get()?.modules;
     const order=['jobon','controlo-criar','controlo-aprovar','boquilhas'];
     const position=href=>href.includes('JOB_ON')?'jobon':href.includes('CONTROLO')?'controlo-criar':href.includes('BOQUILHAS')?'boquilhas':'admin';
-    [...primary.querySelectorAll('a')].sort((a,b)=>{const rank=x=>{const id=position(x.getAttribute('href')||'');return (chosen||order).findIndex(module=>module===id||(id==='controlo-criar'&&module==='controlo-aprovar'))};return (rank(a)<0?99:rank(a))-(rank(b)<0?99:rank(b))}).forEach(link=>primary.append(link));
+    [...primary.querySelectorAll('a')].sort((a,b)=>{const rank=x=>{const id=position(x.getAttribute('href')||'');return order.indexOf(id)};return (rank(a)<0?99:rank(a))-(rank(b)<0?99:rank(b))}).forEach(link=>primary.append(link));
   }
   if(page==='login'){
     const id=document.querySelector('#email');
@@ -48,17 +47,10 @@
     });
   }
   if(page==='controlo-create'){
-    const tabs=document.querySelector('.tabs');
-    if(tabs){tabs.insertAdjacentHTML('beforeend','<a class="beta-sub-link" href="24_PEGAMENTOS_01_VISUAL_AUTHORITY_pegamentos.html">Pegamentos</a><a class="beta-sub-link" href="resumo.html">Resumo</a>');}
     if(new URLSearchParams(location.search).get('view')==='settings')document.querySelector('.tab[data-view="settings"]')?.click();
   }
   if(page==='controlo-approve'){
     const head=document.querySelector('.page-head p');if(head)head.textContent='Controlos submetidos para decisão do responsável autorizado.';
-  }
-  if(page==='pegamentos'){
-    const tabs=document.querySelector('nav.tabs');
-    if(tabs)tabs.insertAdjacentHTML('afterbegin','<a class="beta-sub-link" href="22_PESO_OPERADOR_01_VISUAL_AUTHORITY_peso-operador.html">Peso</a>');
-    if(tabs)tabs.querySelector('[data-tab="registo"]')?.insertAdjacentHTML('afterend','<a class="beta-sub-link" href="resumo.html">Resumo</a>');
   }
   if(page==='jobon'){
     const title=document.querySelector('.sheet-reference-title');if(title)title.textContent='5447T137';

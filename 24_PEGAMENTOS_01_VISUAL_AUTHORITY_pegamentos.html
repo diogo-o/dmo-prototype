@@ -725,7 +725,7 @@ th,td{padding:9px 10px}
 @media(max-width:780px){.context-grid{grid-template-columns:1fr 1fr}.context-jobon,.context-reference{grid-column:1/-1}.context-submit{width:100%}}
 @media(max-width:520px){.context-grid{grid-template-columns:1fr}.context-jobon,.context-reference{grid-column:auto}}
 </style>
-<link rel="stylesheet" href="beta-adapter.css?v=layout-20260924">
+<link rel="stylesheet" href="beta-adapter.css?v=tabs-20260924">
 <link rel="stylesheet" href="beta-shell.css"><script src="beta-session.js" defer></script><script src="beta-flow.js?v=layout-20260924" defer></script><script src="beta-shell.js" defer></script></head>
 <body data-beta-page="pegamentos" class="app-shell">
 
@@ -734,14 +734,16 @@ th,td{padding:9px 10px}
 <nav class="dmo-primary-nav" aria-label="Tarefas principais"><a href="20_JOB_ON_01_VISUAL_AUTHORITY_job-on.html">Job On</a><a class="active" href="21_CONTROLO_01_VISUAL_AUTHORITY_controlo.html" aria-current="page">Controlo</a><a href="31_BOQUILHAS_01_VISUAL_AUTHORITY_boquilhas.html">Boquilhas</a></nav>
 
 <nav class="tabs dmo-secondary-nav" role="tablist" aria-label="Áreas de Pegamentos">
+  <a href="22_PESO_OPERADOR_01_VISUAL_AUTHORITY_peso-operador.html">Peso</a>
   <button type="button" class="active" data-tab="registo">Pegamentos</button>
-  <button type="button" data-tab="referencias">Referências</button>
-  <button type="button" data-tab="config">Configurações</button>
+  <a href="resumo.html">Resumo</a>
+  <a href="22_PESO_OPERADOR_01_VISUAL_AUTHORITY_peso-operador.html?view=history">Histórico</a>
+  <a href="22_PESO_OPERADOR_01_VISUAL_AUTHORITY_peso-operador.html?view=settings">Definições</a>
 </nav>
 
 <main>
 
-<section id="registo" class="tab-panel active"><span id="headerSub" hidden></span>
+<section id="registo" class="tab-panel active"><span id="headerSub" hidden></span><div class="beta-internal-actions"><button type="button" data-tab="referencias">Referências</button><button type="button" data-tab="config">Configurações</button></div>
   <div id="contextCard" class="card context-card">
     <div class="section-heading">
       <div>
@@ -1057,7 +1059,7 @@ function showTab(id){
   if(id==='referencias') renderRecordList();
   if(id==='config') renderConfig();
 }
-document.querySelector('nav.tabs').addEventListener('click', e=>{
+document.addEventListener('click', e=>{
   const b=e.target.closest('button[data-tab]');
   if(!b) return;
   showTab(b.dataset.tab);
@@ -2320,7 +2322,7 @@ window.addEventListener('afterprint', ()=>{ document.getElementById('printArea')
 renderRecordArea();
 restoreMainFolderHandle();
 </script>
-<script src="beta-adapter.js?v=layout-20260924" defer></script>
+<script src="beta-adapter.js?v=tabs-20260924" defer></script>
 </body>
 </html>
 

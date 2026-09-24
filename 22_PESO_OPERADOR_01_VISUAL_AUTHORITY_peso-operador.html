@@ -25,16 +25,17 @@
 @media(max-width:620px){#new .peso-context-grid{grid-template-columns:repeat(2,minmax(0,1fr))}#new .peso-meta-grid{grid-template-columns:repeat(2,minmax(0,1fr))}#new .peso-volume-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:410px){#new .peso-meta-grid,#new .peso-volume-grid{grid-template-columns:1fr 1fr}}
 </style>
-<link rel="stylesheet" href="beta-adapter.css?v=layout-20260924">
+<link rel="stylesheet" href="beta-adapter.css?v=tabs-20260924">
 <link rel="stylesheet" href="beta-shell.css"><script src="beta-session.js" defer></script><script src="beta-flow.js?v=layout-20260924" defer></script><script src="beta-shell.js" defer></script></head>
 <body data-beta-page="controlo-create">
 <header class="dmo-shell-header" data-shell-module="Controlo" data-shell-user="João Silva" data-shell-role="Metrologia"></header>
 <nav class="dmo-primary-nav" aria-label="Tarefas principais"><a href="20_JOB_ON_01_VISUAL_AUTHORITY_job-on.html">Job On</a><a class="active" href="21_CONTROLO_01_VISUAL_AUTHORITY_controlo.html" aria-current="page">Controlo</a><a href="31_BOQUILHAS_01_VISUAL_AUTHORITY_boquilhas.html">Boquilhas</a></nav>
 <nav class="tabs dmo-secondary-nav" aria-label="Áreas do Controlo de Peso">
-<button class="tab active" data-view="new">Novo controlo</button>
-<button class="tab" data-view="refs">Referências</button>
+<button class="tab active" data-view="new">Peso</button>
+<a href="24_PEGAMENTOS_01_VISUAL_AUTHORITY_pegamentos.html">Pegamentos</a>
+<a href="resumo.html">Resumo</a>
 <button class="tab" data-view="history">Histórico</button>
-<button class="tab settings" data-view="settings">Definições</button>
+<button class="tab" data-view="settings">Definições</button>
 </nav>
 <main class="main">
 <section class="view active" id="new">
@@ -646,6 +647,7 @@ const say=(text)=>{toast.textContent=text;toast.classList.add('show');setTimeout
 const showView=(id,navId=id)=>{document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x.dataset.view===navId));document.querySelector('#'+id).classList.add('active')};
 
 document.querySelectorAll('.tab').forEach(button=>button.onclick=()=>showView(button.dataset.view));
+if(new URLSearchParams(location.search).get('view')==='history')showView('history');
 document.querySelectorAll('.select-table tr[data-row]').forEach(row=>{
   row.onclick=()=>{
     row.closest('table').querySelectorAll('tr').forEach(x=>x.classList.remove('selected'));
@@ -754,6 +756,6 @@ document.querySelector('#sendMail').onclick=()=>say('Email de produção prepara
 </script>
 <script src="0_ASSET_CANONICAL_INTERACTIONS.js">
 </script>
-<script src="beta-adapter.js" defer></script>
+<script src="beta-adapter.js?v=tabs-20260924" defer></script>
 </body>
 </html>
