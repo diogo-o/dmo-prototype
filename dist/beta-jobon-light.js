@@ -9,9 +9,61 @@
    {toolId:'DEMO-TOOL-BQ-001',type:'BQ',reference:'T173',lot:'04',machines:'B3',process:'—',quantity:'144 peças'}
  ];
  try{const created=JSON.parse(sessionStorage.getItem('betaDemoTools')||'[]');if(Array.isArray(created))toolCatalog.push(...created.filter(tool=>tool.toolId&&tool.type))}catch(_){}
- let day=21,selected=null;const sheet=$('#lightSheet');
- function renderDays(){const root=$('#lightDays');root.replaceChildren();root.append(document.createElement('span'));for(let d=1;d<=30;d++){const button=document.createElement('button');button.type='button';button.textContent=d;button.className=(d===day?'selected ':'')+(records.some(r=>r.day===d)?'has':'');button.setAttribute('aria-label',`${d} de setembro de 2026`);button.onclick=()=>{day=d;selected=null;renderDays();renderList()};root.append(button)}}
- function renderList(){const root=$('#lightProductionList');root.replaceChildren();const q=$('#lightSearch').value.trim().toLowerCase(),matches=records.filter(r=>r.date===`2026-09-${String(day).padStart(2,'0')}`&&`${r.reference} ${r.production} ${r.line}`.toLowerCase().includes(q)).sort((a,b)=>a.line.localeCompare(b.line)||a.reference.localeCompare(b.reference));$('#lightDayTitle').textContent=`Produções de ${day} de setembro de 2026`;$('#lightNoResults').hidden=matches.length>0;for(const record of matches){const button=document.createElement('button');button.type='button';button.className='beta-light-production'+(selected===record?' selected':'');const machine=document.createElement('strong');machine.textContent=record.line;const reference=document.createElement('span');reference.textContent=record.reference;const production=document.createElement('span');production.textContent=`Produção ${record.production}`;button.append(machine,reference,production);button.onclick=()=>{selected=record;renderList()};button.ondblclick=()=>open(record);root.append(button)}}
+ let year=2026,month=8,day=21,selected=null;const sheet=$('#lightSheet');
+ const selectedDate=()=>`${year}-${String(month+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+ const monthLabel=()=>new Date(year,month,1).toLocaleDateString('pt-PT',{month:'long',year:'numeric'});
+ function renderDays(){
+   const root=$('#lightDays');root.replaceChildren();$('#lightMonthTitle').textContent=monthLabel();
+   const offset=(new Date(year,month,1).getDay()+6)%7;
+   for(let i=0;i<offset;i++)root.append(document.createElement('span'));
+   const total=new Date(year,month+1,0).getDate();
+   for(let d=1;d<=total;d++){
+     const button=document.createElement('button');button.type='button';button.textContent=d;
+     const date=`${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+     button.className=(d===day?'selected ':'')+(records.some(r=>r.date===date)?'has':'');
+     button.setAttribute('aria-label',new Date(year,month,d).toLocaleDateString('pt-PT',{dateStyle:'long'}));
+     button.onclick=()=>{day=d;selected=null;renderDays();renderList()};root.append(button);
+   }
+ }
+ function renderList(){
+   const root=$('#lightProductionList');root.replaceChildren();
+   const q=$('#lightSearch').value.trim().toLowerCase();
+   const matches=records.filter(r=>r.date===selectedDate()&&`${r.reference} ${r.production} ${r.line}`.toLowerCase().includes(q)).sort((a,b)=>a.line.localeCompare(b.line)||a.reference.localeCompare(b.reference));
+   $('#lightDayTitle').textContent=`Produções de ${day} de ${monthLabel()}`;
+   $('#lightNoResults').hidden=matches.length>0;
+   $('#lightRemoveDate').disabled=!selected||!matches.includes(selected);
+   for(const record of matches){
+     const button=document.createElement('button');button.type='button';button.className='beta-light-production'+(selected===record?' selected':'');
+     const machine=document.createElement('strong');machine.textContent=record.line;
+     const reference=document.createElement('span');reference.textContent=record.reference;
+     const production=document.createElement('span');production.textContent=`Produção ${record.production}`;
+     button.append(machine,reference,production);button.onclick=()=>{selected=record;renderList()};button.ondblclick=()=>open(record);root.append(button);
+   }
+ }
+ function changeMonth(delta){const date=new Date(year,month+delta,1);year=date.getFullYear();month=date.getMonth();day=1;selected=null;renderDays();renderList()}
+ $('#lightPreviousMonth').onclick=()=>changeMonth(-1);
+ $('#lightNextMonth').onclick=()=>changeMonth(1);
+ $('#lightRemoveDate').onclick=()=>{
+   if(!selected||selected.date!==selectedDate())return;
+   const row=selected;
+   const saved=JSON.parse(sessionStorage.getItem('betaJobOnSummaries')||'[]');
+   const match=saved.find(item=>item.reference===row.reference&&item.production===row.production&&item.machine===row.line);
+   if(match){match.plannedDate='';sessionStorage.setItem('betaJobOnSummaries',JSON.stringify(saved))}
+   else {const key='betaJobOnCalendarDetached';const detached=JSON.parse(sessionStorage.getItem(key)||'[]');
+     const identity=`${row.line}|${row.reference}|${row.production}`;
+     if(!detached.includes(identity))sessionStorage.setItem(key,JSON.stringify([...detached,identity]));}
+   row.date='';selected=null;renderDays();renderList();renderDetachedHistory();toast('Associação ao dia retirada; Job On preservado.');
+ };
+ function renderDetachedHistory(){
+   const history=$('.beta-light-history');history.querySelectorAll('[data-detached-jobon]').forEach(item=>item.remove());
+   for(const record of records.filter(item=>!item.date)){
+     const entry=document.createElement('div');entry.dataset.detachedJobon='';entry.tabIndex=0;
+     const title=document.createElement('strong');title.textContent=`${record.reference} · ${record.production} · ${record.line}`;
+     const detail=document.createElement('span');detail.textContent='Sem dia associado · Duplo clique para abrir o Job On';
+     entry.append(title,detail);entry.ondblclick=()=>{$('.beta-light-tabs [data-light-view="jobon"]').click();open(record)};
+     entry.onkeydown=event=>{if(event.key==='Enter'){entry.ondblclick()}};history.append(entry);
+   }
+ }
  function showTools(record){
    const root=$('#lightTools');root.replaceChildren();
    for(const type of ['CM','MF','BQ']){
@@ -32,7 +84,7 @@
  }
  function open(record){selected=record||null;sheet.hidden=false;$('#lightReference').value=record?.reference||'';$('#lightProduction').value=record?.production||'';$('#lightMachine').value=record?.line||$('.beta-light-lines .active')?.dataset.line||'B1';$('#lightStart').value='';$('#lightEnd').value='';showTools(record);sheet.scrollIntoView({behavior:'smooth',block:'start'})}
  $$('.beta-light-tabs [data-light-view]').forEach(button=>button.onclick=()=>{$$('.beta-light-tabs button').forEach(x=>x.classList.toggle('active',x===button));$$('[data-light-panel]').forEach(x=>x.classList.toggle('active',x.dataset.lightPanel===button.dataset.lightView))});
- overview.renderRail($('#lightLines'),{onSelect:(line,row)=>{if(row){day=Number(row.date.slice(-2));selected=records.find(item=>item.line===line&&item.reference===row.reference&&item.production===row.production)||null;renderDays();renderList()}},onOpen:(line,row)=>{const record=records.find(item=>item.line===line&&item.reference===row.reference&&item.production===row.production);if(record)open(record)}});
+ overview.renderRail($('#lightLines'),{onSelect:(line,row)=>{if(row&&row.date){const date=new Date(`${row.date}T12:00:00`);year=date.getFullYear();month=date.getMonth();day=date.getDate();selected=records.find(item=>item.line===line&&item.reference===row.reference&&item.production===row.production)||null;renderDays();renderList()}},onOpen:(line,row)=>{const record=records.find(item=>item.line===line&&item.reference===row.reference&&item.production===row.production);if(record)open(record)}});
  $('#lightSearch').oninput=renderList;$('#lightNew').onclick=()=>open(null);$('#lightClose').onclick=()=>sheet.hidden=true;$('#lightDuplicate').onclick=()=>{const previous=records.find(r=>r.reference===$('#lightReference').value&&r!==selected);if(!previous){toast('Sem produção anterior desta referência');return}const production=$('#lightProduction').value;open(previous);$('#lightProduction').value=production;toast('Dados da produção anterior copiados; confirme antes de guardar')};$('#lightForm').onsubmit=e=>{
    e.preventDefault();if(!e.currentTarget.reportValidity())return;
    const reference=$('#lightReference').value.trim().toUpperCase(),production=$('#lightProduction').value.trim(),line=$('#lightMachine').value;
@@ -47,7 +99,7 @@
      const old=previous?.contexts?.[type];const same=old?.tool?.reference===tool.reference&&old?.tool?.lot===tool.lot;
      return [type,{id:same?old.id:id(),tool:{...tool}}];
    }));
-   const summary={reference,production,machine:line,plannedDate:`2026-09-${String(day).padStart(2,'0')}`,process:chosen.CM.process,date:new Date().toLocaleDateString('pt-PT'),jobon:previous?.jobonId||id(),jobonId:previous?.jobonId||null,status:previous?.status||'Em preparação',contexts,tools:Object.fromEntries(selections.map(([type,tool])=>[type,`${tool.reference} · Lote ${tool.lot}`])),cm:`${chosen.CM.reference} · Lote ${chosen.CM.lot}`,mf:`${chosen.MF.reference} · Lote ${chosen.MF.lot}`,bq:`${chosen.BQ.reference} · Lote ${chosen.BQ.lot}`,weightStatus:previous?.weightStatus||'Em falta',gluingStatus:previous?.gluingStatus||'Em falta',observation:previous?.observation||'Resumo criado pelo Job On. Complete os controlos em falta.'};
+   const summary={reference,production,machine:line,plannedDate:selectedDate(),process:chosen.CM.process,date:new Date().toLocaleDateString('pt-PT'),jobon:previous?.jobonId||id(),jobonId:previous?.jobonId||null,status:previous?.status||'Em preparação',contexts,tools:Object.fromEntries(selections.map(([type,tool])=>[type,`${tool.reference} · Lote ${tool.lot}`])),cm:`${chosen.CM.reference} · Lote ${chosen.CM.lot}`,mf:`${chosen.MF.reference} · Lote ${chosen.MF.lot}`,bq:`${chosen.BQ.reference} · Lote ${chosen.BQ.lot}`,weightStatus:previous?.weightStatus||'Em falta',gluingStatus:previous?.gluingStatus||'Em falta',observation:previous?.observation||'Resumo criado pelo Job On. Complete os controlos em falta.'};
    summary.jobonId=summary.jobon;
    if(previous?.tamponGeometry)summary.tamponGeometry=previous.tamponGeometry;
    if(index>=0)saved[index]=summary;else saved.unshift(summary);
@@ -57,5 +109,5 @@
    location.href=`resumo.html?ref=${encodeURIComponent(reference)}&production=${encodeURIComponent(production)}`;
  };
  const draft=sessionStorage.getItem('lightJobDraft');if(new URLSearchParams(location.search).has('toolCreated')&&draft){try{const data=JSON.parse(draft);open(null);$('#lightReference').value=data.reference;$('#lightProduction').value=data.production;$('#lightMachine').value=data.line;$('#lightStart').value=data.start;$('#lightEnd').value=data.end;for(const [type,raw] of Object.entries(data.tools||{})){const card=$(`#lightTools .beta-light-tool[data-type=\"${type}\"]`);if(card&&raw){const tool=JSON.parse(raw);card.dataset.tool=raw;card.querySelector('input').value=tool.reference;card.querySelector('.beta-light-tool-result').hidden=true}}const created=JSON.parse(sessionStorage.getItem('createdTool')||'null');if(created){const card=$(`#lightTools .beta-light-tool[data-type=\"${created.type}\"]`);if(card){card.dataset.tool=JSON.stringify(created);card.querySelector('input').value=created.reference;card.querySelector('.beta-light-tool-result').hidden=true;card.querySelector('a').hidden=true}sessionStorage.removeItem('createdTool')}}catch(e){}sessionStorage.removeItem('lightJobDraft')}
- const params=new URLSearchParams(location.search);const requested=params.get('view');if(requested==='history')$('.beta-light-tabs [data-light-view="history"]').click();renderDays();renderList();const linked=records.find(item=>item.reference===params.get('reference')&&(!params.get('production')||item.production===params.get('production')));if(linked){day=linked.day;renderDays();renderList();open(linked)}else if(requested==='sheet')open(records[0]);
+ const params=new URLSearchParams(location.search);const requested=params.get('view');if(requested==='history')$('.beta-light-tabs [data-light-view="history"]').click();renderDays();renderList();renderDetachedHistory();const linked=records.find(item=>item.reference===params.get('reference')&&(!params.get('production')||item.production===params.get('production')));if(linked){if(linked.date){const date=new Date(`${linked.date}T12:00:00`);year=date.getFullYear();month=date.getMonth();day=date.getDate()}renderDays();renderList();open(linked)}else if(requested==='sheet')open(records[0]);
 })();
