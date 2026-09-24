@@ -4,10 +4,11 @@
 .beta-production-rail-head strong{font-size:13px;text-transform:uppercase;letter-spacing:.03em}
 .beta-production-rail-head span{font-size:11px;color:#bcd3e4}
 .beta-production-lines{display:grid;gap:7px}
-.beta-production-lines button{width:100%;padding:12px;background:#214963;color:#fff;border:1px solid #42617a;border-radius:8px;text-align:left;cursor:pointer}
+.beta-production-lines button{box-sizing:border-box;display:block;width:100%;height:72px;min-height:72px;margin:0;padding:10px 12px;background:#214963;color:#fff;border:1px solid #42617a;border-radius:8px;text-align:left;font:inherit;cursor:pointer;overflow:hidden}
 .beta-production-lines button:hover,.beta-production-lines button:focus-visible,.beta-production-lines button.active{border-color:#a9d1ed;background:#306389}
-.beta-production-lines strong,.beta-production-lines span{display:block}
-.beta-production-lines span{font-size:13px;margin-top:3px;color:#dceaf4}
+.beta-production-lines strong,.beta-production-lines span{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.beta-production-lines strong{font-size:14px;line-height:20px}.beta-production-lines span{font-size:12px;line-height:18px;margin-top:3px;color:#dceaf4}
+.beta-production-lines button:focus-visible{outline:2px solid #fff;outline-offset:-4px}
 .beta-production-calendar-days button,.beta-production-calendar-days .day{aspect-ratio:1;background:#fff;border:1px solid transparent;border-radius:7px;cursor:pointer}
 .beta-production-calendar-days button.has,.beta-production-calendar-days .day.has{font-weight:800;color:#376da1}
 .beta-production-calendar-days button.selected,.beta-production-calendar-days .day.selected{background:#376da1;color:#fff}
@@ -21,3 +22,7 @@ body[data-beta-page="boquilhas"] .beta-bq-layout>.main{min-width:0;width:100%;ma
 body[data-beta-page="boquilhas"] #recordDetail>.card[hidden]{display:none!important}
 .beta-bq-trace-row select{min-height:36px;border:1px solid #cbd9e6;border-radius:7px;background:#fff}
 @media(max-width:720px){.beta-bq-trace-row{align-items:stretch;flex-wrap:wrap}.beta-bq-trace-row span{width:100%}}
+.beta-light-productions .beta-light-production{display:grid;grid-template-columns:46px minmax(0,1fr) auto;min-height:48px;gap:12px;align-items:center;justify-content:normal}
+.beta-light-productions .beta-light-production>strong{color:#193e5e;font-size:14px}.beta-light-productions .beta-light-production>span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.beta-light-productions .beta-light-production-empty{color:#64778a;background:#f6f9fc;cursor:default}.beta-light-productions .beta-light-production-empty>span{grid-column:2/-1}
+@media(max-width:700px){.beta-light-productions .beta-light-production{grid-template-columns:38px minmax(0,1fr);gap:4px 10px}.beta-light-productions .beta-light-production>span:last-child{grid-column:2}.beta-light-productions .beta-light-production-empty>span{grid-column:2}}
