@@ -2,6 +2,9 @@
 .beta-brand-image{width:42px;height:42px;object-fit:contain;flex:0 0 42px}
 .beta-user-nav{display:flex;align-items:center;gap:8px;margin-left:18px}
 .beta-user-nav a{color:var(--dmo-brand-700,#244f77);font-size:11px;font-weight:750;text-decoration:none}
+body[data-beta-page="admin"] .dmo-shell-header .dmo-shell-user{flex-basis:auto;width:auto;min-width:0}
+body[data-beta-page="admin"] .dmo-admin-logout{display:inline-flex;align-items:center;justify-content:center;flex:none;min-height:36px;margin-left:8px;padding:0 14px;border:1px solid var(--dmo-brand-300,#b5cce2);border-radius:7px;background:var(--dmo-brand-050,#f1f6fb);color:var(--dmo-brand-700,#244f77);font-size:12px;font-weight:750;text-decoration:none}
+body[data-beta-page="admin"] .dmo-admin-logout:hover,body[data-beta-page="admin"] .dmo-admin-logout:focus-visible{background:var(--dmo-brand-100,#dfeafa);outline:2px solid var(--dmo-brand-600,#3973a8);outline-offset:2px}
 .beta-module-note{padding:9px 14px;border:1px solid var(--dmo-brand-200);border-left:4px solid var(--dmo-brand-600);border-radius:8px;background:var(--dmo-brand-050);color:var(--dmo-brand-800);font-size:12px}
 .beta-module-note strong{display:block}
 .beta-sub-link{display:inline-flex;align-items:center;padding:0 16px;color:var(--dmo-brand-700);font-size:12px;font-weight:750;text-decoration:none;border-bottom:3px solid transparent}
