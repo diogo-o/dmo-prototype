@@ -30,21 +30,14 @@
    const q=$('#lightSearch').value.trim().toLowerCase();
    const matches=records.filter(r=>r.date===selectedDate()&&`${r.reference} ${r.production} ${r.line}`.toLowerCase().includes(q)).sort((a,b)=>overview.lines.indexOf(a.line)-overview.lines.indexOf(b.line)||a.reference.localeCompare(b.reference));
    $('#lightDayTitle').textContent=`Produções de ${day} de ${monthLabel()}`;
-   $('#lightNoResults').hidden=matches.length>0||!q;
+   $('#lightNoResults').hidden=matches.length>0;
    $('#lightRemoveDate').disabled=!selected||!matches.includes(selected);
-   for(const line of overview.lines){
-     const onLine=matches.filter(record=>record.line===line);
-     if(!onLine.length){
-       if(!q){const empty=document.createElement('div');empty.className='beta-light-production beta-light-production-empty';const label=document.createElement('strong');label.textContent=line;const message=document.createElement('span');message.textContent='Sem produção neste dia';empty.append(label,message);root.append(empty)}
-       continue;
-     }
-     for(const record of onLine){
+   for(const record of matches){
      const button=document.createElement('button');button.type='button';button.className='beta-light-production'+(selected===record?' selected':'');
      const machine=document.createElement('strong');machine.textContent=record.line;
      const reference=document.createElement('span');reference.textContent=record.reference;
      const production=document.createElement('span');production.textContent=`Produção ${record.production}`;
      button.append(machine,reference,production);button.onclick=()=>{selected=record;renderList()};button.ondblclick=()=>open(record);root.append(button);
-     }
    }
  }
  function changeMonth(delta){const date=new Date(year,month+delta,1);year=date.getFullYear();month=date.getMonth();day=1;selected=null;renderDays();renderList()}
