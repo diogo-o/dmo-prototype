@@ -54,7 +54,7 @@
   }
   if(page==='controlo-approve'){
     const head=document.querySelector('.page-head p');if(head)head.textContent='Controlos submetidos para decisão do responsável autorizado.';
-    document.querySelector('.tabs.dmo-secondary-nav')?.insertAdjacentHTML('beforeend','<a class="beta-sub-link" href="resumo.html?mode=approve">Resumos</a>');
+    document.querySelector('.tabs.dmo-secondary-nav')?.insertAdjacentHTML('beforeend','<a class="beta-sub-link" href="resumo.html?mode=approve">Resumo</a>');
   }
   if(page==='pegamentos'){
     const tabs=document.querySelector('nav.tabs');
@@ -94,9 +94,6 @@
   if(page==='boquilhas'){
     for(const selector of ['#newLot','#newLotBatches']){const button=document.querySelector(selector);if(button){button.textContent='Abrir Job On';button.onclick=()=>location.href='20_JOB_ON_01_VISUAL_AUTHORITY_job-on.html'}}
     document.querySelector('#inlineCreate')?.remove();
-  }
-  if(page==='controlo-approve'){
-    document.querySelector('.dmo-app-header__user,.user')?.insertAdjacentHTML('beforeend','<div class="beta-user-nav"><a href="12_LOGIN_01_VISUAL_AUTHORITY_login.html">Sair</a></div>');
   }
   if(page==='boquilhas'){
     const lotGrid=document.querySelector('#lots');

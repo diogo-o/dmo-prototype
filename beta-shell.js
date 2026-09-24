@@ -29,5 +29,10 @@
   role.textContent = demoUser?.title || host.dataset.shellRole || '';
   user.append(name, role);
 
-  host.replaceChildren(logo, identity, user);
+  const logout = document.createElement('a');
+  logout.className = 'dmo-shell-logout';
+  logout.href = '12_LOGIN_01_VISUAL_AUTHORITY_login.html';
+  logout.textContent = 'Sair';
+  logout.setAttribute('aria-label', 'Terminar sessão');
+  host.replaceChildren(logo, identity, user, logout);
 })();

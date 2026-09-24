@@ -16,7 +16,17 @@
   const canApprove=grants.includes('controlo-aprovar');
   const approvalView=canApprove&&(!canCreate||new URLSearchParams(location.search).get('mode')==='approve');
   if(approvalView){
-    document.querySelectorAll('.dmo-secondary-nav a:not([href="resumo.html"])').forEach(link=>link.remove());
+    const secondary=document.querySelector('.dmo-secondary-nav');
+    secondary?.replaceChildren();
+    const approvals=document.createElement('a');
+    approvals.href='23_PESO_RESPONSAVEL_01_VISUAL_AUTHORITY_peso-responsavel.html';
+    approvals.textContent='Aprovações';
+    const summaries=document.createElement('a');
+    summaries.href='resumo.html?mode=approve';
+    summaries.className='active';
+    summaries.setAttribute('aria-current','page');
+    summaries.textContent='Resumo';
+    secondary?.append(approvals,summaries);
     document.querySelector('.beta-back').href='23_PESO_RESPONSAVEL_01_VISUAL_AUTHORITY_peso-responsavel.html';
     document.querySelector('.beta-back').textContent='← Voltar às aprovações';
     const controlNav=[...document.querySelectorAll('.dmo-primary-nav a')].find(link=>link.textContent.trim()==='Controlo');
