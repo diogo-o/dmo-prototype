@@ -205,3 +205,8 @@ html body .dmo-primary-nav :is(a,button),html body .dmo-secondary-nav :is(a,butt
 .beta-flow-context>a{grid-column:2;grid-row:1/span 2;white-space:nowrap;text-decoration:none}
 #new .stack[hidden]{display:none!important}
 @media(max-width:620px){.beta-flow-context{grid-template-columns:1fr}.beta-flow-context>a{grid-column:1;grid-row:auto;justify-self:start;margin-top:8px}}
+
+/* Shared tab geometry, including links and buttons inside the same row. */
+html body .dmo-secondary-nav :is(a,button){margin:0;min-width:max-content;border-radius:0;box-shadow:none;text-transform:none;letter-spacing:normal}
+html body .dmo-secondary-nav :is(a,button)[aria-current="page"]{color:var(--dmo-brand-700);border-bottom-color:var(--dmo-brand-600)}
+.beta-internal-actions{display:flex;gap:8px;justify-content:flex-end;margin:0 0 12px}.beta-internal-actions button{padding:6px 10px;border:1px solid #cbd9e6;border-radius:6px;background:#fff;color:#315879;font-size:12px;cursor:pointer}
