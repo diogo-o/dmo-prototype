@@ -54,7 +54,9 @@
   }
   if(page==='controlo-approve'){
     const head=document.querySelector('.page-head p');if(head)head.textContent='Controlos submetidos para decisão do responsável autorizado.';
-    document.querySelector('.tabs.dmo-secondary-nav')?.insertAdjacentHTML('beforeend','<a class="beta-sub-link" href="resumo.html?mode=approve">Resumo</a>');
+    const tabs=document.querySelector('.tabs.dmo-secondary-nav');
+    tabs?.insertAdjacentHTML('afterbegin','<a class="beta-sub-link" href="resumo.html?mode=approve">Resumo</a>');
+    tabs?.insertAdjacentHTML('beforeend','<a class="beta-sub-link" href="resumo.html?mode=approve&view=history">Histórico</a>');
   }
   if(page==='pegamentos'){
     const tabs=document.querySelector('nav.tabs');
@@ -92,6 +94,18 @@
   }
   // Novas identidades Tool e lotes são criados exclusivamente no Job On.
   if(page==='boquilhas'){
+    window.betaProductionOverview?.renderRail(document.querySelector('#bqCurrentLines'),{
+      onSelect:(_line,row)=>{
+        if(!row){document.querySelector('#recordEmpty').textContent='Sem produção atual nesta linha.';return}
+        const reference=row.bq?.split(' · ')[0]||'';
+        document.querySelector('[data-view="registo"]')?.click();
+        document.querySelector('#recordSearch').value=reference;
+        document.querySelector('#recordEmpty').textContent=`${row.line} · ${row.reference} · ${row.production} · ${row.bq}. Selecione a boquilha para abrir o registo.`;
+        document.querySelector('#recordEmpty').classList.remove('hidden');
+        document.querySelector('#recordDetail').classList.add('hidden');
+      },
+      onOpen:(_line,row)=>location.href=`20_JOB_ON_01_VISUAL_AUTHORITY_job-on.html?reference=${encodeURIComponent(row.reference)}&production=${encodeURIComponent(row.production)}`
+    });
     for(const selector of ['#newLot','#newLotBatches']){const button=document.querySelector(selector);if(button){button.textContent='Abrir Job On';button.onclick=()=>location.href='20_JOB_ON_01_VISUAL_AUTHORITY_job-on.html'}}
     document.querySelector('#inlineCreate')?.remove();
   }

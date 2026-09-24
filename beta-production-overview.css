@@ -1,0 +1,18 @@
+/* Shared current-production rail and date selectors. */
+.beta-production-rail{background:#14334d;color:#fff;padding:17px 12px}
+.beta-production-rail-head{display:grid;gap:3px;padding:0 8px 12px}
+.beta-production-rail-head strong{font-size:13px;text-transform:uppercase;letter-spacing:.03em}
+.beta-production-rail-head span{font-size:11px;color:#bcd3e4}
+.beta-production-lines{display:grid;gap:7px}
+.beta-production-lines button{width:100%;padding:12px;background:#214963;color:#fff;border:1px solid #42617a;border-radius:8px;text-align:left;cursor:pointer}
+.beta-production-lines button:hover,.beta-production-lines button:focus-visible,.beta-production-lines button.active{border-color:#a9d1ed;background:#306389}
+.beta-production-lines strong,.beta-production-lines span{display:block}
+.beta-production-lines span{font-size:13px;margin-top:3px;color:#dceaf4}
+.beta-production-calendar-days button,.beta-production-calendar-days .day{aspect-ratio:1;background:#fff;border:1px solid transparent;border-radius:7px;cursor:pointer}
+.beta-production-calendar-days button.has,.beta-production-calendar-days .day.has{font-weight:800;color:#376da1}
+.beta-production-calendar-days button.selected,.beta-production-calendar-days .day.selected{background:#376da1;color:#fff}
+@media(max-width:700px){.beta-production-rail{padding:10px}.beta-production-lines{display:flex;overflow-x:auto}.beta-production-lines button{min-width:145px}}
+body[data-beta-page="boquilhas"] #bqCurrentLines{position:sticky;float:left;top:94px;width:276px;height:calc(100vh - 94px);overflow:auto;z-index:20}
+body[data-beta-page="boquilhas"] #bqCurrentLines+.main{margin-left:276px;padding:26px 30px 40px}
+@media(max-width:980px) and (min-width:721px){body[data-beta-page="boquilhas"] #bqCurrentLines{width:235px}body[data-beta-page="boquilhas"] #bqCurrentLines+.main{margin-left:235px}}
+@media(max-width:720px){body[data-beta-page="boquilhas"] #bqCurrentLines{position:relative;float:none;top:auto;width:100%;height:auto;margin:0}body[data-beta-page="boquilhas"] #bqCurrentLines+.main{margin:0;padding:22px 14px 30px}}
