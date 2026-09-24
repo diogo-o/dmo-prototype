@@ -57,7 +57,8 @@
   }
   if(page==='pegamentos'){
     const tabs=document.querySelector('nav.tabs');
-    if(tabs)tabs.insertAdjacentHTML('afterbegin','<a class="beta-sub-link" href="22_PESO_OPERADOR_01_VISUAL_AUTHORITY_peso-operador.html">Peso</a><a class="beta-sub-link active" href="24_PEGAMENTOS_01_VISUAL_AUTHORITY_pegamentos.html">Pegamentos</a><a class="beta-sub-link" href="resumo.html">Resumo</a>');
+    if(tabs)tabs.insertAdjacentHTML('afterbegin','<a class="beta-sub-link" href="22_PESO_OPERADOR_01_VISUAL_AUTHORITY_peso-operador.html">Peso</a>');
+    if(tabs)tabs.querySelector('[data-tab="registo"]')?.insertAdjacentHTML('afterend','<a class="beta-sub-link" href="resumo.html">Resumo</a>');
   }
   if(page==='jobon'){
     const title=document.querySelector('.sheet-reference-title');if(title)title.textContent='5447T137';

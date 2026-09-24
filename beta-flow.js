@@ -56,16 +56,11 @@
     const banner=document.createElement('div');banner.className='beta-flow-context dmo-card';
     banner.innerHTML='<strong></strong><span></span><a class="dmo-button ghost">Voltar ao Resumo</a>';
     banner.querySelector('strong').textContent=`Peso · ${ref} / ${production}`;
-    banner.querySelector('span').textContent=`Job On ${context.jobonId||context.jobon} · CM ${cm?.reference||'por selecionar'} · Lote ${cm?.lot||'—'} · ${cm?.process||'—'}`;
+    banner.querySelector('span').textContent=`Produção ${production} · ${context.machine||'—'} · CM ${cm?.reference||'por selecionar'} · Lote ${cm?.lot||'—'}`;
     banner.querySelector('a').href=summaryUrl(ref,production);
     main.prepend(banner);
-    const referenceCard=main.querySelector('.stack > .dmo-card:first-child');
-    if(referenceCard)referenceCard.hidden=true;
-    const referenceFields=main.querySelectorAll('.reference-summary .summary-item strong');
-    [context.reference,cm?.reference||'—',cm?.lot||'—',context.contexts?.BQ?.tool?.reference||'—',cm?.process||'—',context.machine].forEach((value,i)=>{if(referenceFields[i])referenceFields[i].textContent=value});
-    const contextFields=main.querySelectorAll('.comparison-context > div strong');
-    [context.jobonId||context.jobon,context.production,cm?.reference||'—',cm?.lot||'—',cm?.process||'—',context.machine].forEach((value,i)=>{if(contextFields[i])contextFields[i].textContent=value});
-    const contextHint=main.querySelector('.comparison-context + .hint');if(contextHint)contextHint.textContent='Referência, produção, máquina, CM, lote e processo foram recebidos do contexto do Job On. Nesta folha introduzem-se apenas as medições.';
+    const fields={reference:context.reference,production:context.production,cm:`${cm?.reference||'—'} · Lote ${cm?.lot||'—'}`,bq:context.contexts?.BQ?.tool?.reference||'—',process:cm?.process||'—',machine:context.machine||'—'};
+    for(const [name,value] of Object.entries(fields)){const field=main.querySelector(`[data-peso-context="${name}"]`);if(field)field.textContent=value}
     const send=document.querySelector('#sendApproval');
     send?.addEventListener('click',()=>{if(send.disabled)return;update(ref,production,{weightStatus:'A aguardar aprovação'});location.href=summaryUrl(ref,production)});
     const actions=main.querySelector('.page-head');
@@ -91,7 +86,7 @@
     select.value=id;
     applyJobOnContext();
     startPegamentosSheet();
-    const main=document.querySelector('#registo');const banner=document.createElement('div');banner.className='beta-flow-context card';banner.innerHTML='<strong></strong><span></span><a class="btn">Voltar ao Resumo</a>';banner.querySelector('strong').textContent=`Pegamentos · ${ref} / ${production}`;banner.querySelector('span').textContent=`Ferramentas do Job On ${context.jobon}`;banner.querySelector('a').href=summaryUrl(ref,production);main.prepend(banner);
+    const main=document.querySelector('#registo');const banner=document.createElement('div');banner.className='beta-flow-context card';banner.innerHTML='<strong></strong><span></span><a class="btn">Voltar ao Resumo</a>';banner.querySelector('strong').textContent=`Pegamentos · ${ref} / ${production}`;banner.querySelector('span').textContent=`CM ${context.contexts?.CM?.tool?.reference||'—'} · MF ${context.contexts?.MF?.tool?.reference||'—'} · BQ ${context.contexts?.BQ?.tool?.reference||'—'}`;banner.querySelector('a').href=summaryUrl(ref,production);main.prepend(banner);
     const action=document.createElement('button');action.type='button';action.className='btn';action.textContent='Guardar Pegamentos na sessão';action.onclick=()=>{if(!getActive()?.jobOnId){startPegamentosSheet()}if(!getActive()?.jobOnId)return;update(ref,production,{gluingStatus:'Em preparação'});location.href=summaryUrl(ref,production)};main.querySelector('#saveStatus')?.parentElement?.append(action);
   }
   if(page==='controlo-approve'){

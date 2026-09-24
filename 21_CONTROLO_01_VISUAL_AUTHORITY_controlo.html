@@ -6,7 +6,7 @@
   <title>Controlo — Portal DMO</title>
   <link rel="stylesheet" href="0_ASSET_CANONICAL_DESIGN_SYSTEM.css"><link rel="stylesheet" href="0_ASSET_SHELL.css">
   <link rel="stylesheet" href="0_ASSET_INTEGRATED_MOCKUP.css">
-<link rel="stylesheet" href="beta-adapter.css?v=controls-20260924"><link rel="stylesheet" href="beta-shell.css"><script src="beta-session.js" defer></script><script src="beta-shell.js" defer></script></head>
+<link rel="stylesheet" href="beta-adapter.css?v=layout-20260924"><link rel="stylesheet" href="beta-shell.css"><script src="beta-session.js" defer></script><script src="beta-shell.js" defer></script><link rel="stylesheet" href="beta-calendar.css?v=calendar-20260924"></head>
 <body data-beta-page="controlo-hub">
   <header class="dmo-shell-header" data-shell-module="Controlo" data-shell-user="Ana Martins" data-shell-role="Responsável operacional"></header>
   <nav class="module-nav dmo-primary-nav" aria-label="Tarefas principais"><a href="20_JOB_ON_01_VISUAL_AUTHORITY_job-on.html">Job On</a><a class="active" href="21_CONTROLO_01_VISUAL_AUTHORITY_controlo.html" aria-current="page">Controlo</a><a href="31_BOQUILHAS_01_VISUAL_AUTHORITY_boquilhas.html">Boquilhas</a></nav>
@@ -43,10 +43,10 @@
       <section class="tab-panel" data-panel="history">
         <div class="section-head history-title"><div><h2>Histórico do Controlo</h2><p>Consulte documentos e eventos por dia, Produção e tipo de controlo.</p></div></div>
         <div class="control-history-browser">
-          <aside class="history-calendar surface">
-            <div class="history-calendar-head"><button class="more" aria-label="Mês anterior">‹</button><strong>Agosto 2026</strong><button class="more" aria-label="Mês seguinte">›</button></div>
-            <div class="history-week"><span>Seg</span><span>Ter</span><span>Qua</span><span>Qui</span><span>Sex</span><span>Sáb</span><span>Dom</span></div>
-            <div class="history-days" data-control-history-calendar></div>
+          <aside class="history-calendar surface dmo-calendar">
+            <div class="history-calendar-head dmo-calendar-nav"><button class="more" aria-label="Mês anterior">‹</button><strong aria-label="Agosto de 2026">Agosto</strong><button class="more" aria-label="Mês seguinte">›</button></div>
+            <div class="history-week dmo-calendar-week"><span>Seg</span><span>Ter</span><span>Qua</span><span>Qui</span><span>Sex</span><span>Sáb</span><span>Dom</span></div>
+            <div class="history-days dmo-calendar-days" data-control-history-calendar></div>
             <small>Os pontos indicam dias com documentos ou eventos.</small>
           </aside>
           <section class="history-results">
