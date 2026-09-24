@@ -74,12 +74,13 @@
      const input=document.createElement('input');input.type='search';input.setAttribute('aria-label',`Pesquisar ${type}`);input.placeholder=`Pesquisar ${type} por referência`;input.value=facts[0];
      const results=document.createElement('div');results.className='beta-light-tool-result';
      const missing=document.createElement('a');missing.className='dmo-button ghost';missing.textContent=`Criar ${type}`;missing.hidden=true;missing.href='tool-create.html';
-     const choose=tool=>{card.dataset.tool=JSON.stringify(tool);input.value=tool.reference;results.hidden=true;missing.hidden=true;toast(`${type} ${tool.reference} · Lote ${tool.lot} selecionado`)};
+     const choose=tool=>{card.dataset.tool=JSON.stringify(tool);input.value=tool.reference;results.hidden=true;missing.hidden=true;profile.href=`tool-create.html?mode=detail&type=${encodeURIComponent(type)}&reference=${encodeURIComponent(tool.reference)}&lot=${encodeURIComponent(tool.lot)}&toolId=${encodeURIComponent(tool.toolId)}`;profile.hidden=false;toast(`${type} ${tool.reference} · Lote ${tool.lot} selecionado`)};
      const draw=()=>{const term=input.value.trim().toLowerCase();results.replaceChildren();const matches=catalog.filter(item=>!term||`${item.reference} ${item.lot}`.toLowerCase().includes(term));for(const tool of matches){const button=document.createElement('button');button.type='button';button.textContent=`${type} ${tool.reference} · Lote ${tool.lot} · ${tool.process}`;button.onclick=()=>choose(tool);results.append(button)}results.hidden=!matches.length;missing.hidden=!term||!!matches.length;missing.href=`tool-create.html?from=jobon&type=${type}&reference=${encodeURIComponent(input.value.trim())}`};
-     input.oninput=()=>{delete card.dataset.tool;draw()};input.onfocus=draw;
+     input.oninput=()=>{delete card.dataset.tool;profile.hidden=true;draw()};input.onfocus=draw;
      missing.onclick=()=>sessionStorage.setItem('lightJobDraft',JSON.stringify({reference:$('#lightReference').value,production:$('#lightProduction').value,line:$('#lightMachine').value,start:$('#lightStart').value,end:$('#lightEnd').value}));
-     card.append(title,input,results,missing);root.append(card);
-     if(facts[0]){const existing=catalog.find(item=>item.reference===facts[0]&&item.lot===facts[1]);if(existing)card.dataset.tool=JSON.stringify(existing);results.hidden=true}else draw();
+     const profile=document.createElement('a');profile.className='beta-tool-profile-link';profile.textContent='Ver ficha da ferramenta';profile.target='_blank';profile.rel='noopener';profile.hidden=true;
+     card.append(title,input,results,missing,profile);root.append(card);
+     if(facts[0]){const existing=catalog.find(item=>item.reference===facts[0]&&item.lot===facts[1]);if(existing){card.dataset.tool=JSON.stringify(existing);profile.href=`tool-create.html?mode=detail&type=${encodeURIComponent(type)}&reference=${encodeURIComponent(existing.reference)}&lot=${encodeURIComponent(existing.lot)}&toolId=${encodeURIComponent(existing.toolId)}`;profile.hidden=false}results.hidden=true}else draw();
    }
  }
  function open(record){selected=record||null;sheet.hidden=false;$('#lightReference').value=record?.reference||'';$('#lightProduction').value=record?.production||'';$('#lightMachine').value=record?.line||$('.beta-light-lines .active')?.dataset.line||'B1';$('#lightStart').value='';$('#lightEnd').value='';showTools(record);sheet.scrollIntoView({behavior:'smooth',block:'start'})}
