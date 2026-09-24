@@ -110,6 +110,16 @@
 </div>
 </div>
 <div class="grid3 beta-calculation-inputs"><div class="dmo-field"><label>Volume Marisa/BQ (cm³)</label><input id="marisaVolume" type="number" min="0" step="0.01" value="10"></div><div class="dmo-field"><label>Volume Punção/PU (cm³)</label><input id="puncaoVolume" type="number" min="0" step="0.01" value="70"></div><div class="dmo-field"><label>Densidade do vidro (g/cm³)</label><input id="glassDensity" type="number" value="2.5" readonly></div></div>
+<div class="dmo-card card-pad beta-tampao-card" id="tamponCard" tabindex="0" role="button" aria-label="Editar dimensões do tampão; duplo clique para abrir" title="Duplo clique para editar as dimensões">
+<div><strong>Volume do tampão</strong><small id="tamponDimensions">Sem calote associada a esta produção.</small></div>
+<strong id="tamponVolumeLabel">0,00 cm³</strong><span>Duplo clique para editar</span>
+<input id="tamponVolume" type="hidden" value="0">
+</div>
+<dialog id="tamponDialog" class="beta-tampao-dialog" aria-labelledby="tamponDialogTitle"><form method="dialog" id="tamponForm">
+<h3 id="tamponDialogTitle">Calote do tampão</h3><p>Introduza o diâmetro ou o raio da esfera e a altura da calote, em milímetros.</p>
+<div class="grid3"><div class="dmo-field"><label for="tamponDiameter">Diâmetro (mm)</label><input id="tamponDiameter" type="number" min="0.001" step="any" inputmode="decimal"></div><div class="dmo-field"><label for="tamponRadius">Raio (mm)</label><input id="tamponRadius" type="number" min="0.001" step="any" inputmode="decimal"></div><div class="dmo-field"><label for="tamponHeight">Altura da calote (mm)</label><input id="tamponHeight" type="number" min="0" step="any" inputmode="decimal" required></div></div>
+<p id="tamponError" role="alert"></p><div class="actions"><button type="button" class="dmo-button" id="tamponCancel">Cancelar</button><button type="submit" class="dmo-button primary">Calcular volume</button></div>
+</form></dialog>
 <hr style="border:0;border-top:1px solid var(--dmo-border);margin:18px 0">
 <div class="section-head">
 <h3>Leituras por CM</h3>
@@ -699,17 +709,18 @@ function calculateReadingPreview(reading){
   const temperature=numeric(document.querySelector('#waterTemperature'));
   const marisa=numeric(document.querySelector('#marisaVolume'));
   const puncao=numeric(document.querySelector('#puncaoVolume'));
+  const tampao=numeric(document.querySelector('#tamponVolume'));
   const glassDensity=numeric(document.querySelector('#glassDensity'));
   const result=reading.querySelector('.reading-result');
   if(!result)return;
   // This static laboratory uses an explicit example configuration. The modular backend is
   // the calculation authority for a real Peso and supplies the temperature/density values.
-  if(!Number.isFinite(water)||water<=0||!Number.isFinite(temperature)||temperature<5||temperature>35||!Number.isFinite(marisa)||!Number.isFinite(puncao)){
+  if(!Number.isFinite(water)||water<=0||!Number.isFinite(temperature)||temperature<5||temperature>35||!Number.isFinite(marisa)||!Number.isFinite(puncao)||!Number.isFinite(tampao)||!Number.isFinite(glassDensity)||glassDensity<=0){
     reading.dataset.glassWeight='';reading.dataset.capacity='';result.textContent='Capacidade e peso do vidro: —';result.classList.add('pending');return;
   }
   const waterDensity=0.9982;
   const capacity=water/waterDensity;
-  const glassWeight=(capacity+marisa-puncao)*glassDensity;
+  const glassWeight=(capacity+marisa-puncao+tampao)*glassDensity;
   if(glassWeight<=0){reading.dataset.glassWeight='';reading.dataset.capacity='';result.textContent='Verificar volumes: resultado não positivo';result.classList.add('pending');return}
   reading.dataset.capacity=capacity.toFixed(4);reading.dataset.glassWeight=glassWeight.toFixed(4);
   result.textContent=`Capacidade: ${formatPt(capacity)} cm³ · Peso do vidro: ${formatPt(glassWeight)} g`;
@@ -791,6 +802,3 @@ document.querySelector('#sendMail').onclick=()=>say('Email de produção prepara
 <script src="beta-adapter.js" defer></script>
 </body>
 </html>
-
-
-

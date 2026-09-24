@@ -17,6 +17,7 @@
   const approvalView=canApprove&&(!canCreate||new URLSearchParams(location.search).get('mode')==='approve');
   const historyView=approvalView&&new URLSearchParams(location.search).get('view')==='history';
   const visibleRecords=historyView?records.filter(item=>item.status==='Aprovado'||item.status==='Não aprovado'):records;
+  const newestFor=reference=>visibleRecords.filter(item=>item.reference===reference).sort((a,b)=>b.production.localeCompare(a.production)||String(b.date||'').localeCompare(String(a.date||'')))[0];
   if(approvalView){
     const secondary=document.querySelector('.dmo-secondary-nav');
     secondary?.replaceChildren();
@@ -42,6 +43,7 @@
   let active;
   const render=record=>{
     active=record;
+    search.value=record.reference;
     const siblings=visibleRecords.filter(item=>item.reference===record.reference).sort((a,b)=>b.production.localeCompare(a.production));
     select.replaceChildren(...siblings.map(item=>new Option(item.production,item.production,item===record,item===record)));
     const urlFor=filename=>`${filename}?ref=${encodeURIComponent(record.reference)}&production=${encodeURIComponent(record.production)}`;
@@ -71,15 +73,20 @@
   const showMatches=()=>{
     const term=search.value.trim().toLocaleUpperCase('pt-PT');
     results.replaceChildren();results.hidden=!term;
-    if(!term)return;
+    if(!term){active=null;select.replaceChildren(new Option('Selecione uma referência',''));sheet.textContent='Introduza uma referência para consultar os resumos das suas produções.';return}
     const references=[...new Set(visibleRecords.map(item=>item.reference))].filter(reference=>reference.includes(term));
-    if(!references.length){results.textContent='Nenhum Resumo encontrado para esta referência.';return}
-    references.forEach(reference=>{const button=document.createElement('button');button.type='button';button.className='beta-summary-result';button.textContent=`${reference} · ${visibleRecords.filter(item=>item.reference===reference).length} Resumo(s)`;button.onclick=()=>{render(visibleRecords.find(item=>item.reference===reference));search.value='';results.hidden=true};results.append(button)});
+    if(!references.length){active=null;select.replaceChildren(new Option('Nenhuma produção',''));sheet.textContent='Nenhum Resumo encontrado para esta referência.';results.textContent='Nenhuma referência encontrada.';return}
+    const exact=references.find(reference=>reference.toLocaleUpperCase('pt-PT')===term);
+    if(exact){render(newestFor(exact));results.hidden=true;return}
+    active=null;select.replaceChildren(new Option('Selecione uma referência',''));
+    sheet.textContent='Escolha uma referência para ver as produções disponíveis.';
+    references.forEach(reference=>{const button=document.createElement('button');button.type='button';button.className='beta-summary-result';button.textContent=`${reference} · ${visibleRecords.filter(item=>item.reference===reference).length} Resumo(s)`;button.onclick=()=>{render(newestFor(reference));results.hidden=true};results.append(button)});
   };
   search.addEventListener('input',showMatches);
-  select.addEventListener('change',()=>{const record=visibleRecords.find(item=>item.reference===active.reference&&item.production===select.value);if(record)render(record)});
+  select.addEventListener('change',()=>{const record=active&&visibleRecords.find(item=>item.reference===active.reference&&item.production===select.value);if(record)render(record)});
   window.addEventListener('popstate',()=>{const params=new URLSearchParams(location.search);const record=visibleRecords.find(item=>item.reference===params.get('ref')&&item.production===params.get('production'));if(record)render(record)});
   const params=new URLSearchParams(location.search);
-  if(visibleRecords.length)render(visibleRecords.find(item=>item.reference===params.get('ref')&&item.production===params.get('production'))||visibleRecords[0]);
-  else sheet.textContent='Ainda não existem registos concluídos no histórico.';
+  const requested=visibleRecords.find(item=>item.reference===params.get('ref')&&item.production===params.get('production'))||newestFor(params.get('ref'));
+  if(requested)render(requested);
+  else{select.replaceChildren(new Option('Selecione uma referência',''));sheet.textContent=visibleRecords.length?'Introduza uma referência para consultar os resumos das suas produções.':'Ainda não existem registos concluídos no histórico.'}
 })();

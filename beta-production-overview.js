@@ -11,10 +11,14 @@
   function records(){
     const result=fixtures.map(row=>({...row}));
     try{
+      const detached=JSON.parse(sessionStorage.getItem('betaJobOnCalendarDetached')||'[]');
+      for(const row of result)if(detached.includes(`${row.line}|${row.reference}|${row.production}`))row.date='';
+    }catch(_){/* Ignore unavailable demo session. */}
+    try{
       const created=JSON.parse(sessionStorage.getItem('betaJobOnSummaries')||'[]');
       if(Array.isArray(created))for(const summary of created){
         if(!summary.reference||!summary.production||!summary.machine)continue;
-        const date=/^\d{4}-\d{2}-\d{2}$/.test(summary.plannedDate||'')?summary.plannedDate:'2026-09-21';
+        const date=Object.hasOwn(summary,'plannedDate')?summary.plannedDate||'':'2026-09-21';
         const row={date,line:summary.machine,reference:summary.reference,production:summary.production,bq:summary.contexts?.BQ?.tool?`${summary.contexts.BQ.tool.reference} · Lote ${summary.contexts.BQ.tool.lot}`:'—',summary};
         const index=result.findIndex(item=>item.reference===row.reference&&item.production===row.production&&item.line===row.line);
         if(index<0)result.push(row);else result[index]=row;
@@ -30,7 +34,7 @@
     const list=document.createElement('div');list.className='beta-production-lines';host.append(list);
     const current=records();
     for(const line of lines){
-      const row=current.filter(item=>item.line===line).sort((a,b)=>b.date.localeCompare(a.date))[0];
+      const row=current.filter(item=>item.line===line).sort((a,b)=>(b.date||'').localeCompare(a.date||''))[0];
       const button=document.createElement('button');button.type='button';button.dataset.line=line;
       if(line==='B1')button.classList.add('active');
       const label=document.createElement('strong');label.textContent=line;
