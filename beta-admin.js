@@ -8,7 +8,6 @@
   $('#audit')?.remove();
   nav.insertAdjacentHTML('beforeend', '<button type="button" data-view="settings">Definições</button>');
   $('.admin-main').insertAdjacentHTML('beforeend', '<section class="admin-view" id="settings"></section>');
-  $('.admin-user')?.insertAdjacentHTML('beforeend', '<div class="beta-user-nav"><a href="12_LOGIN_01_VISUAL_AUTHORITY_login.html">Sair</a></div>');
   nav.querySelector('[data-view="settings"]').onclick = () => {
     nav.querySelectorAll('button').forEach(button => button.classList.toggle('active', button.dataset.view === 'settings'));
     document.querySelectorAll('.admin-view').forEach(view => view.classList.toggle('active', view.id === 'settings'));

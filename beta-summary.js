@@ -15,8 +15,26 @@
   const canCreate=grants.includes('controlo-criar');
   const canApprove=grants.includes('controlo-aprovar');
   const approvalView=canApprove&&(!canCreate||new URLSearchParams(location.search).get('mode')==='approve');
+  const historyView=approvalView&&new URLSearchParams(location.search).get('view')==='history';
+  const visibleRecords=historyView?records.filter(item=>item.status==='Aprovado'||item.status==='Não aprovado'):records;
+  const newestFor=reference=>visibleRecords.filter(item=>item.reference===reference).sort((a,b)=>b.production.localeCompare(a.production)||String(b.date||'').localeCompare(String(a.date||'')))[0];
   if(approvalView){
-    document.querySelectorAll('.dmo-secondary-nav a:not([href="resumo.html"])').forEach(link=>link.remove());
+    const secondary=document.querySelector('.dmo-secondary-nav');
+    secondary?.replaceChildren();
+    const summaries=document.createElement('a');
+    summaries.href='resumo.html?mode=approve';
+    summaries.textContent='Resumo';
+    const approvals=document.createElement('a');
+    approvals.href='23_PESO_RESPONSAVEL_01_VISUAL_AUTHORITY_peso-responsavel.html';
+    approvals.textContent='Aprovações';
+    const history=document.createElement('a');
+    history.href='resumo.html?mode=approve&view=history';
+    history.textContent='Histórico';
+    const active=historyView?history:summaries;
+    active.className='active';
+    active.setAttribute('aria-current','page');
+    secondary?.append(summaries,approvals,history);
+    if(historyView){document.querySelector('.beta-summary-search label').textContent='Procurar registos concluídos por referência';document.querySelector('.beta-summary-production label').textContent='Produções concluídas desta referência'}
     document.querySelector('.beta-back').href='23_PESO_RESPONSAVEL_01_VISUAL_AUTHORITY_peso-responsavel.html';
     document.querySelector('.beta-back').textContent='← Voltar às aprovações';
     const controlNav=[...document.querySelectorAll('.dmo-primary-nav a')].find(link=>link.textContent.trim()==='Controlo');
@@ -25,7 +43,8 @@
   let active;
   const render=record=>{
     active=record;
-    const siblings=records.filter(item=>item.reference===record.reference).sort((a,b)=>b.production.localeCompare(a.production));
+    search.value=record.reference;
+    const siblings=visibleRecords.filter(item=>item.reference===record.reference).sort((a,b)=>b.production.localeCompare(a.production));
     select.replaceChildren(...siblings.map(item=>new Option(item.production,item.production,item===record,item===record)));
     const urlFor=filename=>`${filename}?ref=${encodeURIComponent(record.reference)}&production=${encodeURIComponent(record.production)}`;
     const tools=record.tools||{CM:record.cm||'Por selecionar',MF:record.mf||'Por selecionar',BQ:record.bq||'Por selecionar'};
@@ -54,14 +73,20 @@
   const showMatches=()=>{
     const term=search.value.trim().toLocaleUpperCase('pt-PT');
     results.replaceChildren();results.hidden=!term;
-    if(!term)return;
-    const references=[...new Set(records.map(item=>item.reference))].filter(reference=>reference.includes(term));
-    if(!references.length){results.textContent='Nenhum Resumo encontrado para esta referência.';return}
-    references.forEach(reference=>{const button=document.createElement('button');button.type='button';button.className='beta-summary-result';button.textContent=`${reference} · ${records.filter(item=>item.reference===reference).length} Resumo(s)`;button.onclick=()=>{render(records.find(item=>item.reference===reference));search.value='';results.hidden=true};results.append(button)});
+    if(!term){active=null;select.replaceChildren(new Option('Selecione uma referência',''));sheet.textContent='Introduza uma referência para consultar os resumos das suas produções.';return}
+    const references=[...new Set(visibleRecords.map(item=>item.reference))].filter(reference=>reference.includes(term));
+    if(!references.length){active=null;select.replaceChildren(new Option('Nenhuma produção',''));sheet.textContent='Nenhum Resumo encontrado para esta referência.';results.textContent='Nenhuma referência encontrada.';return}
+    const exact=references.find(reference=>reference.toLocaleUpperCase('pt-PT')===term);
+    if(exact){render(newestFor(exact));results.hidden=true;return}
+    active=null;select.replaceChildren(new Option('Selecione uma referência',''));
+    sheet.textContent='Escolha uma referência para ver as produções disponíveis.';
+    references.forEach(reference=>{const button=document.createElement('button');button.type='button';button.className='beta-summary-result';button.textContent=`${reference} · ${visibleRecords.filter(item=>item.reference===reference).length} Resumo(s)`;button.onclick=()=>{render(newestFor(reference));results.hidden=true};results.append(button)});
   };
   search.addEventListener('input',showMatches);
-  select.addEventListener('change',()=>{const record=records.find(item=>item.reference===active.reference&&item.production===select.value);if(record)render(record)});
-  window.addEventListener('popstate',()=>{const params=new URLSearchParams(location.search);const record=records.find(item=>item.reference===params.get('ref')&&item.production===params.get('production'));if(record)render(record)});
+  select.addEventListener('change',()=>{const record=active&&visibleRecords.find(item=>item.reference===active.reference&&item.production===select.value);if(record)render(record)});
+  window.addEventListener('popstate',()=>{const params=new URLSearchParams(location.search);const record=visibleRecords.find(item=>item.reference===params.get('ref')&&item.production===params.get('production'));if(record)render(record)});
   const params=new URLSearchParams(location.search);
-  render(records.find(item=>item.reference===params.get('ref')&&item.production===params.get('production'))||records[0]);
+  const requested=visibleRecords.find(item=>item.reference===params.get('ref')&&item.production===params.get('production'))||newestFor(params.get('ref'));
+  if(requested)render(requested);
+  else{select.replaceChildren(new Option('Selecione uma referência',''));sheet.textContent=visibleRecords.length?'Introduza uma referência para consultar os resumos das suas produções.':'Ainda não existem registos concluídos no histórico.'}
 })();

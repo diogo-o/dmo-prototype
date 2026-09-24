@@ -762,19 +762,19 @@ th,td{padding:9px 10px}
       <div class="field context-reference">
         <label for="ctx-reference">Referência</label>
         <div class="context-combo" id="referenceCombo">
-          <input id="ctx-reference" placeholder="Herdada do Job On" readonly aria-readonly="true" autocomplete="off" aria-controls="referenceOptions" aria-expanded="false">
-          <button type="button" class="context-combo-toggle" disabled aria-label="Referência herdada do Job On">▾</button>
+          <input id="ctx-reference" placeholder="" readonly aria-readonly="true" autocomplete="off" aria-controls="referenceOptions" aria-expanded="false">
+          <button type="button" class="context-combo-toggle" disabled aria-label="Referência">▾</button>
           <div id="referenceOptions" class="context-options" role="listbox" hidden></div>
         </div>
       </div>
       <div class="field context-production">
         <label for="ctx-production">Produção</label>
-        <input id="ctx-production" inputmode="numeric" maxlength="6" placeholder="Herdada" readonly aria-readonly="true">
+        <input id="ctx-production" inputmode="numeric" maxlength="6" placeholder="" readonly aria-readonly="true">
       </div>
       <div class="field context-machine">
         <label for="ctx-machine">Máquina</label>
         <select id="ctx-machine" disabled aria-disabled="true">
-          <option value="">Herdada</option>
+          <option value=""></option>
           <option>B1</option><option>B2</option><option>B3</option>
           <option>C1</option><option>C2</option><option>C3</option>
         </select>
@@ -2245,7 +2245,6 @@ function buildStandaloneReport(rec){
 <body>
 <div class="toolbar"><button onclick="window.print()">Imprimir / Guardar PDF</button></div>
 <div class="page">${buildReportHTML(rec)}<div class="print-foot"><strong>Desenvolvido por Diogo Oliveira · 2026</strong></div></div>
-<script src="beta-adapter.js" defer></script>
 </body>
 </html>`;
 }
@@ -2321,9 +2320,9 @@ window.addEventListener('afterprint', ()=>{ document.getElementById('printArea')
 renderRecordArea();
 restoreMainFolderHandle();
 </script>
+<script src="beta-adapter.js" defer></script>
 </body>
 </html>
-
 
 
 
