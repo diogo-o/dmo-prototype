@@ -197,3 +197,11 @@ body[data-beta-page="boquilhas"] .main:has(#historico.active)>.beta-bq-context{d
 /* Shared control sizes for the operational pages. Navigation and calendar days keep their own geometry. */
 body input:is([type="search"],[placeholder^="Pesquisar"],[placeholder^="Procurar"]){box-sizing:border-box;min-width:0;min-height:40px;padding:8px 12px;border:1px solid #cbd9e6;border-radius:8px;background:#fff;color:#172d42;font:inherit}
 body input:is([type="search"],[placeholder^="Pesquisar"],[placeholder^="Procurar"]):focus-visible{outline:2px solid #376da1;outline-offset:1px}
+html body{font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+html body :is(button,input,select,textarea){font-family:inherit}
+html body .dmo-primary-nav :is(a,button),html body .dmo-secondary-nav :is(a,button){font-family:inherit;font-size:14px;font-weight:800}
+.beta-flow-context{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 16px;align-items:center;margin-bottom:16px;padding:14px 16px}
+.beta-flow-context>strong{grid-column:1;font-size:14px}.beta-flow-context>span{grid-column:1;color:var(--dmo-muted,#64778a);font-size:12px}
+.beta-flow-context>a{grid-column:2;grid-row:1/span 2;white-space:nowrap;text-decoration:none}
+#new .stack[hidden]{display:none!important}
+@media(max-width:620px){.beta-flow-context{grid-template-columns:1fr}.beta-flow-context>a{grid-column:1;grid-row:auto;justify-self:start;margin-top:8px}}

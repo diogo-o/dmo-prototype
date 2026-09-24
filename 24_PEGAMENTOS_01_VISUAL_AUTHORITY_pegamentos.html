@@ -725,8 +725,8 @@ th,td{padding:9px 10px}
 @media(max-width:780px){.context-grid{grid-template-columns:1fr 1fr}.context-jobon,.context-reference{grid-column:1/-1}.context-submit{width:100%}}
 @media(max-width:520px){.context-grid{grid-template-columns:1fr}.context-jobon,.context-reference{grid-column:auto}}
 </style>
-<link rel="stylesheet" href="beta-adapter.css?v=controls-20260924">
-<link rel="stylesheet" href="beta-shell.css"><script src="beta-session.js" defer></script><script src="beta-flow.js" defer></script><script src="beta-shell.js" defer></script></head>
+<link rel="stylesheet" href="beta-adapter.css?v=layout-20260924">
+<link rel="stylesheet" href="beta-shell.css"><script src="beta-session.js" defer></script><script src="beta-flow.js?v=layout-20260924" defer></script><script src="beta-shell.js" defer></script></head>
 <body data-beta-page="pegamentos" class="app-shell">
 
 <header class="dmo-shell-header" data-shell-module="Controlo" data-shell-user="João Silva" data-shell-role="Metrologia"></header>
@@ -755,8 +755,8 @@ th,td{padding:9px 10px}
         <label for="ctx-jobon">Job On / produção</label>
         <select id="ctx-jobon" onchange="applyJobOnContext()">
           <option value="">Selecionar Job On</option>
-          <option value="JO-202601-B3">JO-202601-B3 · 202601 · 9389T194</option>
-          <option value="JO-202603-B1">JO-202603-B1 · 202603 · 5774T173</option>
+          <option value="JO-202601-B3">9389T194 · Produção 202601 · B3</option>
+          <option value="JO-202603-B1">5774T173 · Produção 202603 · B1</option>
         </select>
       </div>
       <div class="field context-reference">
@@ -1140,7 +1140,7 @@ function renderRecordArea(){
   document.getElementById('recordArea').style.display = ready ? 'block' : 'none';
   document.getElementById('contextCard').classList.toggle('is-active',ready);
   document.getElementById('ctx-reference').value=rec ? rec.reference : '';
-  document.getElementById('ctx-production').value=rec ? rec.production : currentProduction();
+  document.getElementById('ctx-production').value=rec ? rec.production : '';
   document.getElementById('ctx-machine').value=rec ? rec.machine : '';
   document.getElementById('ctx-jobon').value=rec ? rec.jobOnId : '';
   document.getElementById('headerSub').textContent = rec ? `A editar: ${rec.reference || '(sem referência)'}` : 'Sobreposição CM · Boquilha · Molde Final';
@@ -2320,9 +2320,8 @@ window.addEventListener('afterprint', ()=>{ document.getElementById('printArea')
 renderRecordArea();
 restoreMainFolderHandle();
 </script>
-<script src="beta-adapter.js" defer></script>
+<script src="beta-adapter.js?v=layout-20260924" defer></script>
 </body>
 </html>
-
 
 
