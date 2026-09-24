@@ -106,7 +106,6 @@
       },
       onOpen:(_line,row)=>location.href=`20_JOB_ON_01_VISUAL_AUTHORITY_job-on.html?reference=${encodeURIComponent(row.reference)}&production=${encodeURIComponent(row.production)}`
     });
-    for(const selector of ['#newLot','#newLotBatches']){const button=document.querySelector(selector);if(button){button.textContent='Abrir Job On';button.onclick=()=>location.href='20_JOB_ON_01_VISUAL_AUTHORITY_job-on.html'}}
     document.querySelector('#inlineCreate')?.remove();
   }
   if(page==='boquilhas'){
