@@ -11,9 +11,9 @@
  try{const created=JSON.parse(sessionStorage.getItem('betaDemoTools')||'[]');if(Array.isArray(created))toolCatalog.push(...created.filter(tool=>tool.toolId&&tool.type))}catch(_){}
  let year=2026,month=8,day=21,selected=null;const sheet=$('#lightSheet');
  const selectedDate=()=>`${year}-${String(month+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
- const monthLabel=()=>new Date(year,month,1).toLocaleDateString('pt-PT',{month:'long',year:'numeric'});
+ const monthLabel=()=>new Date(year,month,1).toLocaleDateString('pt-PT',{month:'long'});
  function renderDays(){
-   const root=$('#lightDays');root.replaceChildren();$('#lightMonthTitle').textContent=monthLabel();
+   const root=$('#lightDays');root.replaceChildren();$('#lightMonthTitle').textContent=monthLabel();$('#lightMonthTitle').setAttribute('aria-label',new Date(year,month,1).toLocaleDateString('pt-PT',{month:'long',year:'numeric'}));
    const offset=(new Date(year,month,1).getDay()+6)%7;
    for(let i=0;i<offset;i++)root.append(document.createElement('span'));
    const total=new Date(year,month+1,0).getDate();
