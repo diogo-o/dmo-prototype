@@ -195,7 +195,5 @@ body[data-beta-page="admin"] .beta-user-detail-actions .danger{--button-color:va
 body[data-beta-page="boquilhas"] .main:has(#historico.active)>.beta-bq-context{display:none}
 
 /* Shared control sizes for the operational pages. Navigation and calendar days keep their own geometry. */
-body :is(.dmo-button,.btn,.button){min-height:36px;font-size:12px}
-body :is(.dmo-button,.btn,.button):focus-visible{outline:2px solid #376da1;outline-offset:2px}
 body input:is([type="search"],[placeholder^="Pesquisar"],[placeholder^="Procurar"]){box-sizing:border-box;min-width:0;min-height:40px;padding:8px 12px;border:1px solid #cbd9e6;border-radius:8px;background:#fff;color:#172d42;font:inherit}
 body input:is([type="search"],[placeholder^="Pesquisar"],[placeholder^="Procurar"]):focus-visible{outline:2px solid #376da1;outline-offset:1px}

@@ -24,5 +24,4 @@ body[data-beta-page="boquilhas"] #recordDetail>.card[hidden]{display:none!import
 @media(max-width:720px){.beta-bq-trace-row{align-items:stretch;flex-wrap:wrap}.beta-bq-trace-row span{width:100%}}
 .beta-light-productions .beta-light-production{display:grid;grid-template-columns:46px minmax(0,1fr) auto;min-height:48px;gap:12px;align-items:center;justify-content:normal}
 .beta-light-productions .beta-light-production>strong{color:#193e5e;font-size:14px}.beta-light-productions .beta-light-production>span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.beta-light-productions .beta-light-production-empty{color:#64778a;background:#f6f9fc;cursor:default}.beta-light-productions .beta-light-production-empty>span{grid-column:2/-1}
-@media(max-width:700px){.beta-light-productions .beta-light-production{grid-template-columns:38px minmax(0,1fr);gap:4px 10px}.beta-light-productions .beta-light-production>span:last-child{grid-column:2}.beta-light-productions .beta-light-production-empty>span{grid-column:2}}
+@media(max-width:700px){.beta-light-productions .beta-light-production{grid-template-columns:38px minmax(0,1fr);gap:4px 10px}.beta-light-productions .beta-light-production>span:last-child{grid-column:2}}
